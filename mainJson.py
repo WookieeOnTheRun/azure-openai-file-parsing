@@ -7,7 +7,7 @@ import modules.config as cfg
 import modules.functions as fn
 
 # define important variables
-reviewDoc = "./docx/64KB.json"
+reviewDoc = ""
 
 openai.api_type = cfg.aoaiApiType
 openai.api_base = cfg.aoaiEndpoint
