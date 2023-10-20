@@ -13,10 +13,8 @@ import modules.config as cfg
 import modules.functions as fn
 
 # define important variables
-# reviewDoc = "./docx/az104-trainer-handbook.pdf"
-# promptTopic = "the Microsoft AZ-104 certification exam."
-reviewDoc = "./docx/linux4pros.pdf"
-promptTopic = "commands in the Linux Operating System used by Linux Professionals."
+reviewDoc = ""
+promptTopic = ""
 
 outputTracking = {}
 outputTracking[ "Pages" ] = {}
