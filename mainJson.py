@@ -51,8 +51,8 @@ with open( reviewDoc, "r" ) as rawJson :
         stop = None
     )
 
-    print( response )
+    # print( response )
     # print( response[ "choices" ] )
-    # print( "Response: ", response[ "choices"][ 0 ][ "message" ][ "content" ] )
+    print( "Response: ", response[ "choices"][ 0 ][ "message" ][ "content" ] )
 
 print( "End Time: ", dt.now() )
