@@ -62,6 +62,7 @@ def fnGetFileType( file ) :
 
     return fileExt
 
+# ingest file and pass content to LLM
 def fnIngestFile( file ) :
 
     pageTracker = {}
