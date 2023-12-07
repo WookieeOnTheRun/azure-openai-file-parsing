@@ -11,6 +11,7 @@ from langchain.text_splitter import CharacterTextSplitter
 
 import modules.config as cfg
 import modules.functions as fn
+import modules.prompts as pr
 
 # define important variables
 reviewDoc = ""
@@ -23,12 +24,6 @@ openai.api_type = cfg.aoaiApiType
 openai.api_base = cfg.aoaiEndpoint
 openai.api_version = cfg.aoaiApiVersion
 openai.api_key = cfg.aoaiApiKey
-
-userPrompt = """Analyze the following text, and then provide a list of the key topics and details about each topic. Organize the generated output by topic, 
-and then provide a bulleted list for each detail about each topic"""
-
-systemPrompt = """You are an expert in summarizing technical documentation and providing a bulleted list of key topics and details about each topic. 
-You are reading a technical document about """ + promptTopic
 
 # Track Start and End Times
 print( "Start Time: ", dt.now() )
