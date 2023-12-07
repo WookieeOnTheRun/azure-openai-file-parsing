@@ -117,5 +117,6 @@ def fnIngestFile( file ) :
         outputDict = fnGenerateCompletions( pageTracker )
 
     # connect to Vector Index in AI Search and write embeddings
+    def fnWriteEmbeddings( page ) :
 
-    client = SearchClient( cfg.searchEndpoint, cfg.searchVectorIndex, AzureKeyCredential( cfg.searchKey ) )
+        client = SearchClient( cfg.searchEndpoint, cfg.searchVectorIndex, AzureKeyCredential( cfg.searchKey ) )
