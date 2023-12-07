@@ -1,4 +1,6 @@
-import json, openai, requests, pypdf
+import openai, json, requests, tiktoken, pypdf
+
+import docx, pptx, xlwings
 
 from langchain.document_loaders import PyPDFLoader
 from langchain.vectorstores import faiss
@@ -10,35 +12,42 @@ import modules.config as cfg
 import modules.prompts as pr
 
 # generate completion from provided model deployment
-def fnGenerateMultiPageCompletions( pageId, page ) :
+def fnGenerateCompletions( pageDict ) :
 
     outputTracking = {}
 
-    promptItem = pr.genericUserPrompt + ":" + str( page )
+    for key, item in pageDict.items() :
+
+        for pageData in item :
+
+            pageId = pageData[ 0 ]
+            page = pageData[ 1 ]
+
+            promptItem = pr.genericUserPrompt + ":" + str( page )
     
-    response = openai.ChatCompletion.create(
-        engine = cfg.aoaiModel ,
-        messages =  [
-        {
-            "role" : "system" ,
-            "content" : pr.genericSysPrompt
-        },{
-            "role" : "user" ,
-            "content" : promptItem
-        }],
-            temperature = cfg.temp,
-            max_tokens = cfg.maxTokens,
-            top_p = 0.95,
-            frequency_penalty = 0,
-            presence_penalty = 0,
-            stop = None
-        )
+            response = openai.ChatCompletion.create(
+                engine = cfg.aoaiModel ,
+                messages =  [
+                {
+                    "role" : "system" ,
+                    "content" : pr.genericSysPrompt
+                },{
+                    "role" : "user" ,
+                    "content" : promptItem
+                }],
+                    temperature = cfg.temp,
+                    max_tokens = cfg.maxTokens,
+                    top_p = 0.95,
+                    frequency_penalty = 0,
+                    presence_penalty = 0,
+                    stop = None
+                )
 
-    # print( response )
-    # print( response[ "choices" ] )
-    # print( "Response: ", response[ "choices"][ 0 ][ "message" ][ "content" ] )
+            # print( response )
+            # print( response[ "choices" ] )
+            # print( "Response: ", response[ "choices"][ 0 ][ "message" ][ "content" ] )
 
-    outputTracking[ pageId ] = ( response[ "choices"][ 0 ][ "message" ][ "content" ] )
+            outputTracking[ pageId ] = ( response[ "choices"][ 0 ][ "message" ][ "content" ] )
 
     print( outputTracking )
 
@@ -55,11 +64,12 @@ def fnGetFileType( file ) :
 
 def fnIngestFile( file ) :
 
+    pageTracker = {}
+    pageTracker[ file ] = []
+
     fileExt = fnGetFileType( file )
 
     if fileExt.upper() == "PDF" :
-
-        pageTracker = {}
 
         fileLoader = PyPDFLoader( file )
         pageCollection = fileLoader.load_and_split()
@@ -72,14 +82,32 @@ def fnIngestFile( file ) :
             pageId = page.metadata[ "page" ]
             pageContent = page.page_content
 
-    elif fileExt.upper() in [ "TXT", "CSV", "JSON" ] :
+            pageJson = {
+                pageId : pageContent
+            }
 
-        with open( file, "r" ) as rawJson :
+            pageTracker[ file ].append( pageJson )
 
-            fileImport = rawJson.read()
+    elif fileExt.upper() in [ "TXT", "CSV", "JSON", "XML" ] :
+
+        idx = 1
+
+        with open( file, "r" ) as rawFile :
+
+            fileImport = rawFile.read()
 
             # print( fileImport )
 
-    elif fileExt.upper() in [ "DOC", "DOCX", "PPT", "PPTX" ] :
+            pageJson = {
+                idx : fileImport
+            }
 
-        # blah blah blah
+            pageTracker[ file ].append( pageJson )
+
+    elif fileExt.upper() in [ "DOC", "DOCX", "PPT", "PPTX", "XLS", "XLSX" ] :
+
+        # do something with Office Docs
+
+    if len( pageTracker.keys() ) > 0 :
+
+        outputDict = fnGenerateCompletions( pageTracker )
