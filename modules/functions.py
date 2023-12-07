@@ -2,6 +2,9 @@ import openai, json, requests, tiktoken, pypdf
 
 import docx, pptx, xlwings
 
+from azure.search.documents import SearchClient
+from azure.core.credentials import AzureKeyCredential
+
 from langchain.document_loaders import PyPDFLoader
 from langchain.vectorstores import faiss
 from langchain.embeddings import OpenAIEmbeddings
@@ -112,3 +115,7 @@ def fnIngestFile( file ) :
     if len( pageTracker.keys() ) > 0 :
 
         outputDict = fnGenerateCompletions( pageTracker )
+
+    # connect to Vector Index in AI Search and write embeddings
+
+    client = SearchClient( cfg.searchEndpoint, cfg.searchVectorIndex, AzureKeyCredential( cfg.searchKey ) )
